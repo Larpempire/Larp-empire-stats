@@ -15,7 +15,7 @@ const client = new Client({
 });
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
-const OWNER_ID = "1463951189984018588";
+const OWNER_ID = "1464634211406188721";
 
 const SUPPORT_ROLES = [
   "1463224284922249420",
@@ -23,7 +23,7 @@ const SUPPORT_ROLES = [
 ];
 
 // ================= BANNERE =================
-const BANNER_TOP = "https://i.imgur.com/lx1ZH9Q.gif";
+const BANNER_TOP = "https://i.imgur.com/hw4rH89.jpeg";
 const PURGE_BANNERS = [
   "https://i.imgur.com/dTgmP6g.gif",
   "https://i.imgur.com/pd1yzwU.gif",
@@ -36,8 +36,8 @@ const FUCK_GIFS = [
 
 // ================= CANALE PERMISE PENTRU PURGE =================
 const ALLOWED_PURGE_CHANNELS = [
-  "1463224286532604019",
   "1463224286532604021",
+  "1525538133087752334",
   "1463224286532604020"
 ];
 
@@ -193,10 +193,10 @@ client.on("messageCreate", async (message) => {
     const panelEmbeds = [
       {
         "color": 0x000000,
-        "image": { "url": "https://i.imgur.com/lx1ZH9Q.gif" }
+        "image": { "url": "https://i.imgur.com/hw4rH89.jpeg" }
       },
       {
-        "title": "— <a:emoji_20:1464222092353605735> ᴄᴏʀʀᴜᴘᴛ ʜᴇʟᴘ —",
+        "title": "— <a:emoji_20:1464222092353605735> 𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 ʜᴇʟᴘ —",
         "description": "<a:emoji_17:1463657710246691008> ʜᴇʟʟᴏ!  ᴡᴇ ᴀʀᴇ ʜᴇʀᴇ ᴛᴏ ʜᴇʟᴘ ʏᴏᴜ.\n\n<a:emoji_18:1463658185901608991> ᴘʟᴇᴀsᴇ ᴄʜᴏᴏsᴇ ᴛʜᴇ ᴛʏᴘᴇ ᴏғ ʏᴏᴜʀ ɪssᴜᴇ ᴜsɪɴɢ ᴛʜᴇ ᴍᴇɴᴜ ʙᴇʟᴏᴡ.\n\n<a:corrupt_card:1463245786421661718> ᴏᴜʀ ᴛᴇᴀᴍ ᴡɪʟʟ ʀᴇsᴘᴏɴᴅ ᴀs sᴏᴏɴ ᴀs ᴘᴏssɪʙʟᴇ ᴡɪᴛʜ ᴀssɪsᴛᴀɴᴄᴇ.",
         "color": 0x000000,
         "image": { "url": "https://i.imgur.com/3i5dler.gif" }
@@ -245,7 +245,7 @@ client.on("interactionCreate", async (interaction) => {
     const ticketEmbeds = [
       {
         "color": 0x000000,
-        "image": { "url": "https://i.imgur.com/lx1ZH9Q.gif" }
+        "image": { "url": "https://i.imgur.com/EeDXFxJ.jpeg" }
       },
       {
         "title": "— <a:emoji_20:1464222092353605735> ᴛɪᴄᴋᴇᴛ —",
