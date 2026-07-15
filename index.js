@@ -202,15 +202,12 @@ if (message.content.startsWith("!unhook")) {
         .setColor(0x000000)
         .setTitle("— <a:emoji_20:1464222092353605735> UNHOOK TUTORIAL —")
         .setDescription(
-`<a:emoji_17:1463657710246691008> **UNHOOK TUTORIAL**
-
-If your beams do not say **"larp empire"**
+`If your beams do not say **"larp empire"**
 then you might be losing your beams.
-
 Watch the video below to be safe.`
         )
         .setFooter({
-            text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`,
+            text: ` Requested by ${message.author.username}`,
             iconURL: message.author.displayAvatarURL({ dynamic: true })
         });
 
@@ -218,7 +215,6 @@ Watch the video below to be safe.`
         new ButtonBuilder()
             .setCustomId("unhook_video")
             .setLabel("Unhook")
-            .setEmoji("1463657710246691008")
             .setStyle(ButtonStyle.Secondary)
     );
 
@@ -234,21 +230,21 @@ if (message.content.startsWith("!help")) {
         .setColor(0x000000)
         .setTitle("— <a:emoji_20:1464222092353605735> HELP MENU —")
         .setDescription(
-`<a:emoji_17:1463657710246691008> **Available Commands**
+` **Available Commands**
 
-<a:heart:1463322847546966087> **!stats [@user]**
+ **!stats [@user]**
 Shows the stats of a registered user.
 
-<a:heart:1463322847546966087> **!daily [@user]**
+ **!daily [@user]**
 Shows today's stats.
 
-<a:heart:1463322847546966087> **!fuck @user**
+ **!fuck @user**
 Displays a random GIF with the selected user.
 
-<a:heart:1463322847546966087> **!purge**
-Deletes messages in the current channel.
+ **!purge**
+Deletes messages in the current channel.(owner only oneweeksober ofc)
 
-<a:heart:1463322847546966087> **!unhook**
+ **!unhook**
 Shows a tutorial explaining how to avoid getting hooked and keep your beams safe.`
         )
         .setImage(getRandomPurge())
