@@ -33,7 +33,11 @@ const FUCK_GIFS = [
   "https://cdn.hentaigifz.com/84966/bounce-bounce.gif",
   "https://cdn.hentaigifz.com/88822/mankitsu-happening.gif"
 ];
-
+const UNHOOK_BANNERS = [
+  "https://i.imgur.com/dTgmP6g.gif",
+  "https://i.imgur.com/pd1yzwU.gif",
+  "https://i.imgur.com/3i5dler.gif"
+];
 // ================= CANALE PERMISE PENTRU PURGE =================
 const ALLOWED_PURGE_CHANNELS = [
   "1525971262285807761"
@@ -49,7 +53,9 @@ async function fetchWithTimeout(url, timeout = 20000) {
 }
 function getRandomPurge() { return PURGE_BANNERS[Math.floor(Math.random() * PURGE_BANNERS.length)]; }
 function getRandomFuck() { return FUCK_GIFS[Math.floor(Math.random() * FUCK_GIFS.length)]; }
-
+function getRandomUnhook() {
+    return UNHOOK_BANNERS[Math.floor(Math.random()*UNHOOK_BANNERS.length)];
+}
 // ================= LOGIN =================
 console.log("Trying to login Discord bot...");
 client.login(TOKEN).then(() => console.log(`Logged in as ${client.user.tag}`));
@@ -155,11 +161,11 @@ client.on("messageCreate", async (message) => {
 
   // ================= !purge manual =================
   if (message.content.startsWith("!purge") && message.author.id === OWNER_ID) {
-    if (!ALLOWED_PURGE_CHANNELS.includes(message.channel.id)) {
-      return message.reply("❌ This channel is not allowed for purge!");
-    }
+   
 
-    const fetched = await message.channel.messages.fetch({ limit: 100 });
+    const fetched = await message.channel.messages.fetch({ limit: 100 }); 
+
+    
     const deleted = await message.channel.bulkDelete(fetched, true);
 
     const embed = new EmbedBuilder()
@@ -185,7 +191,74 @@ client.on("messageCreate", async (message) => {
 
     await message.channel.send({ embeds: [embed] });
   }
+// ================= !unhook =================
+if (message.content.startsWith("!unhook")) {
 
+    const embedTop = new EmbedBuilder()
+        .setColor(0x000000)
+        .setImage(getRandomUnhook());
+
+    const embed = new EmbedBuilder()
+        .setColor(0x000000)
+        .setTitle("— <a:emoji_20:1464222092353605735> UNHOOK TUTORIAL —")
+        .setDescription(
+`<a:emoji_17:1463657710246691008> **UNHOOK TUTORIAL**
+
+If your beams do not say **"larp empire"**
+then you might be losing your beams.
+
+Watch the video below to be safe.`
+        )
+        .setFooter({
+            text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`,
+            iconURL: message.author.displayAvatarURL({ dynamic: true })
+        });
+
+    const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId("unhook_video")
+            .setLabel("Unhook")
+            .setEmoji("1463657710246691008")
+            .setStyle(ButtonStyle.Secondary)
+    );
+
+    await message.channel.send({
+        embeds: [embedTop, embed],
+        components: [row]
+    });
+}
+  // ================= !help =================
+if (message.content.startsWith("!help")) {
+
+    const embed = new EmbedBuilder()
+        .setColor(0x000000)
+        .setTitle("— <a:emoji_20:1464222092353605735> HELP MENU —")
+        .setDescription(
+`<a:emoji_17:1463657710246691008> **Available Commands**
+
+<a:heart:1463322847546966087> **!stats [@user]**
+Shows the stats of a registered user.
+
+<a:heart:1463322847546966087> **!daily [@user]**
+Shows today's stats.
+
+<a:heart:1463322847546966087> **!fuck @user**
+Displays a random GIF with the selected user.
+
+<a:heart:1463322847546966087> **!purge**
+Deletes messages in the current channel.
+
+<a:heart:1463322847546966087> **!unhook**
+Shows a tutorial explaining how to avoid getting hooked and keep your beams safe.`
+        )
+        .setImage(getRandomPurge())
+        .setFooter({
+            text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`,
+            iconURL: message.author.displayAvatarURL({ dynamic: true })
+        });
+
+    await message.channel.send({ embeds: [embed] });
+}
   // ================= !create_ticket_panel =================
   if (message.content.startsWith("!create_ticket_panel") && message.author.id === OWNER_ID) {
     const panelEmbeds = [
@@ -258,6 +331,11 @@ client.on("interactionCreate", async (interaction) => {
     await ticketChannel.send({ embeds: ticketEmbeds.map(e => EmbedBuilder.from(e)), components: [closeButton] });
   }
 
+  if (interaction.isButton() && interaction.customId === "unhook_video") {
+    await interaction.reply({
+        content: "**Video:**\nhttps://streamable.com/06tnbq"
+    });
+}
   if (interaction.isButton() && interaction.customId === "close_ticket") {
     await interaction.channel.delete().catch(() => null);
   }
