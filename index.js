@@ -239,17 +239,18 @@ Shows the stats of a registered user.
 Shows today's stats.
 
  **!fuck @user**
-Displays a random GIF with the selected user.
+Displays a random fuhing video with the selected user.
 
  **!purge**
-Deletes messages in the current channel.(owner only oneweeksober ofc)
+Deletes messages in the current channel.
+(owner only oneweeksober ofc)
 
  **!unhook**
 Shows a tutorial explaining how to avoid getting hooked and keep your beams safe.`
         )
         .setImage(getRandomPurge())
         .setFooter({
-            text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`,
+            text: ` Requested by ${message.author.username}`,
             iconURL: message.author.displayAvatarURL({ dynamic: true })
         });
 
