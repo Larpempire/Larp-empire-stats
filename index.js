@@ -232,11 +232,11 @@ if (message.content.startsWith("!help")) {
         .setDescription(
 ` **Available Commands**
 
- **!stats [@user]**
-Shows the stats of a registered user.
+ **!stats or [@user]**
+Shows the stats of a registered user or your own stats.
 
- **!daily [@user]**
-Shows today's stats.
+ **!daily or [@user]**
+Shows someones daily stats or your daily stats.
 
  **!fuck @user**
 Displays a random fuhing video with the selected user.
