@@ -175,7 +175,7 @@ client.on("messageCreate", async (message) => {
         `**!unhook**\n` +
         `Shows the unhook tutorial for beams (if beams don't say "larp empire").\n\n` +
         `**!check**\n` +
-        `Checks if the  website is online/offline + browser compatibility (Chrome, Firefox, Opera etc.).\n\n` +
+        `Checks if the logged.tg website is online/offline + browser compatibility (Chrome, Firefox, Opera etc.).\n\n` +
         `**!create_ticket_panel**\n` +
         `(Owner only) Creates the ticket selection panel (roblox / standoff2 / others).`
       )
@@ -217,13 +217,11 @@ client.on("messageCreate", async (message) => {
             `<:wife2:1528425805099696148> **Response:** ${latency}ms\n` +
             `<:Wifee:1528425538358870117> **Status Code:** ${res.status}\n\n` +
             `**Browser Compatibility**\n` +
-            `\`\`\`\n` +
-            `<:chroma:1528429000710557866>      <:verified2:1528430350546501642>\n` +
-            `<:firefx:1528425451943362670>      <:verified2:1528430350546501642>\n` +
-            `<:operaa:1528425324704956608>      <:verified2:1528430350546501642>\n` +
-            `<:operagxb:1528424369120870491>    <:verified2:1528430350546501642>\n` +
-            `<:internetexp:1528425385291944117> <:verified2:1528430350546501642>\n` +
-            `\`\`\``
+            `<:chroma:1528429000710557866>       <:verified2:1528430350546501642>\n` +
+            `<:firefx:1528425451943362670>       <:verified2:1528430350546501642>\n` +
+            `<:operaa:1528425324704956608>       <:verified2:1528430350546501642>\n` +
+            `<:operagxb:1528424369120870491>     <:verified2:1528430350546501642>\n` +
+            `<:internetexp:1528425385291944117>  <:verified2:1528430350546501642>`
           )
           .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif")
           .setFooter({ text: `Requested by ${message.author.username}` });
