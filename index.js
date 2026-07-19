@@ -215,9 +215,9 @@ client.on("messageCreate", async (message) => {
   `**Browser Compatibility**\n` +
   `<:chroma:1528429000710557866>⠀⠀⠀⠀⠀⠀⠀⠀<:verified2:1528430350546501642>\n` +
   `<:firefx:1528425451943362670>⠀⠀⠀⠀⠀⠀⠀⠀<:verified2:1528430350546501642>\n` +
-  `<:operaa:1528425324704956608>⠀⠀⠀⠀⠀⠀⠀⠀<:verified2:1528430350546501642>\n` +
-  `<:operagxb:1528424369120870491>⠀⠀⠀⠀⠀<:verified2:1528430350546501642>\n` +
-  `<:internetexp:1528425385291944117>⠀<:verified2:1528430350546501642>`
+  `<:operaa:1528425324704956608>⠀⠀⠀⠀⠀⠀⠀⠀⠀<:verified2:1528430350546501642>\n` +
+  `<:operagxb:1528424369120870491>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<:verified2:1528430350546501642>\n` +
+  `<:internetexp:1528425385291944117>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<:verified2:1528430350546501642>`
 )
           .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif")
           .setFooter({ text: `Requested by ${message.author.username}` });
