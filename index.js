@@ -105,32 +105,7 @@ client.on("messageCreate", async (message) => {
     } catch (err) { console.error(err); message.reply("❌ API timeout.").catch(() => null); }
   }
 
-  // !daily
-  if (message.content.startsWith("!daily")) {
-    try {
-      const res = await fetchWithTimeout(`https://api.injuries.to/v2/daily?userId=${targetId}`);
-      const data = await res.json();
-      if (!data.success) return message.reply("❌ No daily stats found.");
-
-      const daily = data.Daily || data.Normal || {};
-      const profile = data.Profile || {};
-      const userName = profile.userName || targetUser.username;
-
-      if (!daily.Totals) return message.reply("❌ No daily data available yet.");
-
-      const embedTop = new EmbedBuilder().setColor(0x000000).setImage(BANNER_TOP);
-      const embedDaily = new EmbedBuilder().setColor(0x000000).setTitle(`— <a:emoji_20:1464222092353605735> DAILY STATS —`)
-        .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
-        .setDescription(`**USER:** \`${userName}\`\n\n<a:heart:1463322847546966087> **TOTAL DAILY STATS**\n\`\`\`Hits:     ${formatNumber(daily.Totals?.Accounts)}\nVisits:   ${formatNumber(daily.Totals?.Visits)}\nClicks:   ${formatNumber(daily.Totals?.Clicks)}\`\`\``)
-        .setImage(getRandomPurge())
-        .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
-
-      await message.channel.send({ embeds: [embedTop, embedDaily], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`))] });
-    } catch (err) {
-      console.error(err);
-      message.reply("❌ Daily API issue.").catch(() => null);
-    }
-  }
+  // !daily REMOVED
 
   // !purge
   if (message.content.startsWith("!purge") && message.author.id === OWNER_ID) {
@@ -166,8 +141,6 @@ client.on("messageCreate", async (message) => {
         `**Available Commands:**\n\n` +
         `**!stats [@user]**\n` +
         `Provides the full stats of a user (hits, visits, clicks, biggest hits, RAP, Robux etc.)\n\n` +
-        `**!daily [@user]**\n` +
-        `Provides the daily stats of a user (hits, visits, clicks).\n\n` +
         `**!fuck @user**\n` +
         `Sends a funny GIF message to the mentioned user.\n\n` +
         `**!purge**\n` +
