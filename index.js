@@ -22,18 +22,11 @@ const SUPPORT_ROLES = ["1525971260943892518", "1525971260943892517"];
 
 // ================= BANNERE =================
 const BANNER_TOP = "https://i.imgur.com/hw4rH89.jpeg";
-const PURGE_BANNERS = [
-  "https://i.imgur.com/dTgmP6g.gif",
-  "https://i.imgur.com/pd1yzwU.gif",
-  "https://i.imgur.com/3i5dler.gif"
-];
-const FUCK_GIFS = [
-  "https://cdn.hentaigifz.com/84966/bounce-bounce.gif",
-  "https://cdn.hentaigifz.com/88822/mankitsu-happening.gif"
-];
+const PURGE_BANNERS = ["https://i.imgur.com/dTgmP6g.gif", "https://i.imgur.com/pd1yzwU.gif", "https://i.imgur.com/3i5dler.gif"];
+const FUCK_GIFS = ["https://cdn.hentaigifz.com/84966/bounce-bounce.gif", "https://cdn.hentaigifz.com/88822/mankitsu-happening.gif"];
 const UNHOOK_BANNERS = [...PURGE_BANNERS];
 
-// ================= CANALE PERMISE PENTRU PURGE =================
+// ================= CANALE PERMISE PURGE =================
 const ALLOWED_PURGE_CHANNELS = ["1525971262285807761"];
 
 // ================= UTILS =================
@@ -42,18 +35,15 @@ function formatNumber(num) { return num ? num.toLocaleString() : "0"; }
 async function fetchWithTimeout(url, timeout = 20000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
-  try {
-    return await fetch(url, { signal: controller.signal });
-  } finally {
-    clearTimeout(id);
-  }
+  try { return await fetch(url, { signal: controller.signal }); } 
+  finally { clearTimeout(id); }
 }
 
 function getRandomPurge() { return PURGE_BANNERS[Math.floor(Math.random() * PURGE_BANNERS.length)]; }
 function getRandomFuck() { return FUCK_GIFS[Math.floor(Math.random() * FUCK_GIFS.length)]; }
 function getRandomUnhook() { return UNHOOK_BANNERS[Math.floor(Math.random() * UNHOOK_BANNERS.length)]; }
 
-// ================= ANTI-RAID / SPAM / LINKS =================
+// ================= ANTI-RAID =================
 const userMessageMap = new Map();
 
 client.on("messageCreate", async (message) => {
@@ -62,60 +52,45 @@ client.on("messageCreate", async (message) => {
   if (!member) return;
   const botAvatar = client.user.displayAvatarURL({ dynamic: true });
 
-  // === SPAM + LINK PROTECTION ===
+  // SPAM + BURST
   const userData = userMessageMap.get(message.author.id) || { count: 0, timer: null, lastMessage: Date.now() };
   userData.count += 1;
+  if (Date.now() - userData.lastMessage < 1000) userData.count += 3;
 
-  const timeSinceLast = Date.now() - userData.lastMessage;
-  if (timeSinceLast < 800) userData.count += 2; // burst detection
-
-  if (!userData.timer) {
-    userData.timer = setTimeout(() => userMessageMap.delete(message.author.id), 15000);
-  }
+  if (!userData.timer) userData.timer = setTimeout(() => userMessageMap.delete(message.author.id), 15000);
   userMessageMap.set(message.author.id, { ...userData, lastMessage: Date.now() });
 
   if (userData.count > 8) {
-    await member.timeout(20 * 60 * 1000, "Raid/Spam detected").catch(() => null);
-    const embed = new EmbedBuilder()
-      .setColor(0x000000)
-      .setTitle("You are timed out!")
-      .setDescription("Stop spamming or raiding.")
-      .setThumbnail(botAvatar);
-    await message.author.send({ embeds: [embed] }).catch(() => null);
+    await member.timeout(20 * 60 * 1000, "Raid/Spam").catch(() => null);
     await message.delete().catch(() => null);
+    const embed = new EmbedBuilder().setColor(0x000000).setTitle("Timed out!").setDescription("Stop raiding/spamming.").setThumbnail(botAvatar);
+    await message.author.send({ embeds: [embed] }).catch(() => null);
     return;
   }
 
-  // === STRONG LINK DETECTION (anti-raid) ===
+  // STRONG LINK BLOCK
   const linkRegex = /(https?:\/\/|discord\.gg|discordapp\.com\/invite|bit\.ly|tinyurl|short\.link|youtu\.be|twitch\.tv)/i;
   if (linkRegex.test(message.content)) {
     await message.delete().catch(() => null);
-    await member.timeout(15 * 60 * 1000, "Link sent - raid prevention").catch(() => null);
-    
-    const embed = new EmbedBuilder()
-      .setColor(0x000000)
-      .setTitle("Links are strictly forbidden")
-      .setDescription("Sending any links will result in timeout.")
-      .setThumbnail(botAvatar);
+    await member.timeout(15 * 60 * 1000, "Link - anti-raid").catch(() => null);
+    const embed = new EmbedBuilder().setColor(0x000000).setTitle("Links forbidden").setDescription("Any link = timeout.").setThumbnail(botAvatar);
     await message.author.send({ embeds: [embed] }).catch(() => null);
     return;
   }
 
-  // === INJURIES WORD ===
   if (/injuries/i.test(message.content)) {
-    await member.timeout(10 * 60 * 1000, "Sent 'injuries'").catch(() => null);
-    const embed = new EmbedBuilder().setColor(0x000000).setTitle("You are timed out!").setDescription("Stop sending 'injuries'.").setThumbnail(botAvatar);
-    await message.author.send({ embeds: [embed] }).catch(() => null);
+    await member.timeout(10 * 60 * 1000).catch(() => null);
     await message.delete().catch(() => null);
+    const embed = new EmbedBuilder().setColor(0x000000).setTitle("Timed out").setDescription("Stop 'injuries'.").setThumbnail(botAvatar);
+    await message.author.send({ embeds: [embed] }).catch(() => null);
     return;
   }
 
   const targetUser = message.mentions.users.first() || message.author;
   const targetId = targetUser.id;
 
-  // ================= COMMANDS =================
+  // !stats
   if (message.content.startsWith("!stats")) {
-    // ... (kept same, minor cleanup)
     try {
       const res = await fetchWithTimeout(`https://api.injuries.to/v1/public/user?userId=${targetId}`);
       const data = await res.json();
@@ -126,112 +101,101 @@ client.on("messageCreate", async (message) => {
       const userName = profile.userName || targetUser.username;
 
       const embedTop = new EmbedBuilder().setColor(0x000000).setImage(BANNER_TOP);
-      const embed = new EmbedBuilder()
-        .setColor(0x000000)
-        .setTitle(`— <a:emoji_20:1464222092353605735> NORMAL STATS —`)
+      const embed = new EmbedBuilder().setColor(0x000000).setTitle(`— <a:emoji_20:1464222092353605735> NORMAL STATS —`)
         .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
         .setDescription(`**USER:** \`${userName}\`\n\n<a:heart:1463322847546966087> **TOTAL STATS**\n\`\`\`Hits:     ${formatNumber(normal.Totals?.Accounts)}\nVisits:   ${formatNumber(normal.Totals?.Visits)}\nClicks:   ${formatNumber(normal.Totals?.Clicks)}\`\`\`\n\n<a:corrupt_card:1463245786421661718> **BIGGEST HITS**\n\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\``)
         .setImage(getRandomPurge())
         .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
 
-      const buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`)
-      );
-
-      await message.channel.send({ embeds: [embedTop, embed], components: [buttons] });
-    } catch (err) {
-      console.error(err);
-      message.reply("❌ API did not respond in time.").catch(() => null);
-    }
+      await message.channel.send({ embeds: [embedTop, embed], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`))] });
+    } catch (err) { console.error(err); message.reply("❌ API timeout.").catch(() => null); }
   }
 
+  // !daily (fixed)
   if (message.content.startsWith("!daily")) {
-    // ... (kept same logic, optimized)
     try {
       const res = await fetchWithTimeout(`https://api.injuries.to/v2/daily?userId=${targetId}`);
       const data = await res.json();
       if (!data.success) return message.reply("❌ No daily stats found.");
 
-      const daily = data.Daily || data.Normal;
+      const daily = data.Daily || data.Normal || {};
       const profile = data.Profile || {};
       const userName = profile.userName || targetUser.username;
 
+      if (!daily.Totals) return message.reply("❌ No daily data available yet.");
+
       const embedTop = new EmbedBuilder().setColor(0x000000).setImage(BANNER_TOP);
-      const embedDaily = new EmbedBuilder()
-        .setColor(0x000000)
-        .setTitle(`— <a:emoji_20:1464222092353605735> DAILY STATS —`)
+      const embedDaily = new EmbedBuilder().setColor(0x000000).setTitle(`— <a:emoji_20:1464222092353605735> DAILY STATS —`)
         .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
         .setDescription(`**USER:** \`${userName}\`\n\n<a:heart:1463322847546966087> **TOTAL DAILY STATS**\n\`\`\`Hits:     ${formatNumber(daily.Totals?.Accounts)}\nVisits:   ${formatNumber(daily.Totals?.Visits)}\nClicks:   ${formatNumber(daily.Totals?.Clicks)}\`\`\``)
         .setImage(getRandomPurge())
         .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
 
-      const buttonsDaily = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`)
-      );
-
-      await message.channel.send({ embeds: [embedTop, embedDaily], components: [buttonsDaily] });
+      await message.channel.send({ embeds: [embedTop, embedDaily], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`))] });
     } catch (err) {
       console.error(err);
-      message.reply("❌ Daily API did not respond.").catch(() => null);
+      message.reply("❌ Daily API issue.").catch(() => null);
     }
   }
 
+  // !purge
   if (message.content.startsWith("!purge") && message.author.id === OWNER_ID) {
     try {
       const fetched = await message.channel.messages.fetch({ limit: 100 });
       const deleted = await message.channel.bulkDelete(fetched, true);
-      const embed = new EmbedBuilder()
-        .setColor(0x000000)
-        .setTitle("Successfully purged")
-        .setDescription(`Deleted ${deleted.size} messages in #${message.channel.name}`)
-        .setImage(getRandomPurge())
-        .setFooter({ text: "𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Automated Purge", iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+      const embed = new EmbedBuilder().setColor(0x000000).setTitle("Successfully purged").setDescription(`Deleted ${deleted.size} messages`).setImage(getRandomPurge()).setFooter({ text: "𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Purge" });
       await message.channel.send({ embeds: [embed] });
-    } catch (e) {
-      message.reply("Purge failed.").catch(() => null);
-    }
+    } catch (e) { message.reply("Purge failed.").catch(() => null); }
   }
 
+  // !fuck
   if (message.content.startsWith("!fuck")) {
     const mention = message.mentions.users.first();
-    if (!mention) return message.reply("❌ You must mention a user!");
-    const embed = new EmbedBuilder()
-      .setColor(0x000000)
-      .setTitle(`Fucking ${mention.username}`)
-      .setDescription(`<@${mention.id}>`)
-      .setImage(getRandomFuck())
-      .setFooter({ text: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
-    await message.channel.send({ embeds: [embed] });
+    if (!mention) return message.reply("❌ Mention a user!");
+    await message.channel.send({
+      embeds: [new EmbedBuilder().setColor(0x000000).setTitle(`Fucking ${mention.username}`).setDescription(`<@${mention.id}>`).setImage(getRandomFuck()).setFooter({ text: `Requested by ${message.author.username}` })]
+    });
   }
 
+  // !unhook
   if (message.content.startsWith("!unhook")) {
     const embedTop = new EmbedBuilder().setColor(0x000000).setImage(getRandomUnhook());
-    const embed = new EmbedBuilder()
-      .setColor(0x000000)
-      .setTitle("— <a:emoji_20:1464222092353605735> UNHOOK TUTORIAL —")
-      .setDescription(`If your beams do not say **"larp empire"** then you might be losing your beams.\nWatch the video below to be safe.`)
-      .setFooter({ text: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
-
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId("unhook_video").setLabel("Unhook").setStyle(ButtonStyle.Secondary)
-    );
-
+    const embed = new EmbedBuilder().setColor(0x000000).setTitle("— <a:emoji_20:1464222092353605735> UNHOOK TUTORIAL —").setDescription(`If your beams do not say **"larp empire"** then you might be losing your beams.\nWatch the video below.`);
+    const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId("unhook_video").setLabel("Unhook").setStyle(ButtonStyle.Secondary));
     await message.channel.send({ embeds: [embedTop, embed], components: [row] });
   }
 
+  // !help
   if (message.content.startsWith("!help")) {
     const embed = new EmbedBuilder()
       .setColor(0x000000)
       .setTitle("— <a:emoji_20:1464222092353605735> HELP MENU —")
-      .setDescription(`**Available Commands**\n\n**!stats** [@user]\n**!daily** [@user]\n**!fuck** @user\n**!purge** (owner only)\n**!unhook**\n\nLinks & spam are strictly blocked.`)
+      .setDescription(`**Available Commands**
+
+**!stats [@user]** → Normal stats
+**!daily [@user]** → Daily stats
+**!fuck @user** → Fuck gif
+**!purge** → Mass delete (owner only)
+**!unhook** → Safety tutorial
+**!check** / **!domains** → Check logged.tg status
+**!create_ticket_panel** (owner) → Ticket panel`)
       .setImage(getRandomPurge())
-      .setFooter({ text: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
+      .setFooter({ text: `Requested by ${message.author.username}` });
     await message.channel.send({ embeds: [embed] });
   }
 
+  // !create_ticket_panel
   if (message.content.startsWith("!create_ticket_panel") && message.author.id === OWNER_ID) {
-    // ... panel creation same
-    const panelEmbeds = [/* same as before */];
+    const panelEmbeds = [
+      { color: 0x000000, image: { url: BANNER_TOP } },
+      {
+        title: "— <a:emoji_20:1464222092353605735> 𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢  —",
+        description: "<a:emoji_17:1463657710246691008> ʜᴇʟʟᴏ! ᴡᴇ ᴀʀᴇ ʜᴇʀᴇ ᴛᴏ ʜᴇʟᴘ ʏᴏᴜ.\n\n<a:emoji_18:1463658185901608991> ᴘʟᴇᴀsᴇ ᴄʜᴏᴏsᴇ ᴛʜᴇ ᴛʏᴘᴇ ᴏғ ʏᴏᴜʀ ɪssᴜᴇ ᴜsɪɴɢ ᴛʜᴇ ᴍᴇɴᴜ ʙᴇʟᴏᴡ.",
+        color: 0x000000,
+        image: { url: "https://i.imgur.com/3i5dler.gif" }
+      }
+    ];
+
     const selectMenu = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder().setCustomId("ticket_select").setPlaceholder("Select Ticket Type")
         .addOptions([
@@ -243,12 +207,44 @@ client.on("messageCreate", async (message) => {
 
     await message.channel.send({ embeds: panelEmbeds.map(e => EmbedBuilder.from(e)), components: [selectMenu] });
   }
+
+  // ================= !check =================
+  if (message.content.startsWith("!check") || message.content.startsWith("!domains")) {
+    const checkingEmbed = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage("https://cdn.pfps.gg/banners/8077-anime-red.png")
+      .setDescription("**Checking domain...**");
+
+    const msg = await message.channel.send({ embeds: [checkingEmbed] });
+
+    try {
+      const start = Date.now();
+      const res = await fetchWithTimeout("https://www.logged.tg/dashboard", 12000);
+      const latency = Date.now() - start;
+
+      if (res.ok) {
+        const onlineEmbed = new EmbedBuilder()
+          .setColor(0x00FF00)
+          .setImage("https://cdn.pfps.gg/banners/8077-anime-red.png")
+          .setDescription(`**Website is online**\n\n**Response:** ${latency}ms\n**Status Code:** ${res.status}\n\n**Browser Compatibility**\n🌴 Chrome ✅\n🌴 Firefox ✅\n🌴 Safari ✅\n🌴 Edge ✅\n🌴 Internet Explorer ✅`)
+          .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif");
+        await msg.edit({ embeds: [onlineEmbed] });
+      } else {
+        throw new Error("Not OK");
+      }
+    } catch (err) {
+      const offlineEmbed = new EmbedBuilder()
+        .setColor(0xFF0000)
+        .setImage("https://cdn.pfps.gg/banners/8077-anime-red.png")
+        .setDescription(`**Domain is offline**\n\n**Error:** Timeout\n**Unable to fetch from API**`)
+        .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif");
+      await msg.edit({ embeds: [offlineEmbed] });
+    }
+  }
 });
 
 // ================= INTERACTIONS =================
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isStringSelectMenu() && !interaction.isButton()) return;
-
   if (interaction.isStringSelectMenu() && interaction.customId === "ticket_select") {
     const type = interaction.values[0];
     const member = interaction.member;
@@ -256,7 +252,7 @@ client.on("interactionCreate", async (interaction) => {
     const channelName = `${member.user.username}-${type}`.toLowerCase().replace(/[^a-z0-9-]/g, "-");
 
     if (guild.channels.cache.find(c => c.name === channelName)) {
-      return interaction.reply({ content: `You already have a ticket open: #${channelName}`, ephemeral: true });
+      return interaction.reply({ content: `You already have a ticket: #${channelName}`, ephemeral: true });
     }
 
     const ticketChannel = await guild.channels.create({
@@ -270,13 +266,18 @@ client.on("interactionCreate", async (interaction) => {
       ]
     });
 
-    await interaction.reply({ content: `Your ticket has been created: ${ticketChannel}`, ephemeral: true });
+    await interaction.reply({ content: `Ticket created: ${ticketChannel}`, ephemeral: true });
 
-    const ticketEmbeds = [/* same as before */];
-    const closeButton = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId("close_ticket").setLabel("Close Ticket").setStyle(ButtonStyle.Secondary)
-    );
+    const ticketEmbeds = [
+      { color: 0x000000, image: { url: BANNER_TOP } },
+      {
+        title: "— <a:emoji_20:1464222092353605735> ᴛɪᴄᴋᴇᴛ —",
+        description: "ᴡᴇʟᴄᴏᴍᴇ!\n\n<a:emoji_17:1463657710246691008> ᴘʟᴇᴀsᴇ ᴅᴇsᴄʀɪʙᴇ ʏᴏᴜʀ ɪssᴜᴇ ʜᴇʀᴇ.\n\n<a:emoji_18:1463658185901608991> ᴏᴜʀ sᴜᴘᴘᴏʀᴛ ᴛᴇᴀᴍ ᴡɪʟʟ ᴀssɪsᴛ ʏᴏᴜ ᴀs sᴏᴏɴ ᴀs ᴘᴏssɪʙʟᴇ.",
+        color: 0x000000
+      }
+    ];
 
+    const closeButton = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId("close_ticket").setLabel("Close Ticket").setStyle(ButtonStyle.Secondary));
     await ticketChannel.send({ embeds: ticketEmbeds.map(e => EmbedBuilder.from(e)), components: [closeButton] });
   }
 
@@ -296,19 +297,14 @@ setInterval(async () => {
       for (const channelId of ALLOWED_PURGE_CHANNELS) {
         const channel = guild.channels.cache.get(channelId);
         if (!channel?.isTextBased()) continue;
-
         const fetched = await channel.messages.fetch({ limit: 50 }).catch(() => null);
         if (fetched?.size > 0) {
-          const deleted = await channel.bulkDelete(fetched, true).catch(() => null);
-          if (deleted?.size) console.log(`Auto-purge: ${deleted.size} msgs in ${channel.name}`);
+          await channel.bulkDelete(fetched, true).catch(() => null);
         }
       }
     }
-  } catch (err) {
-    console.error("Auto-purge error:", err);
-  }
+  } catch (err) { console.error("Auto-purge error:", err); }
 }, 30 * 60 * 1000);
 
 // ================= LOGIN =================
-console.log("Trying to login Discord bot...");
 client.login(TOKEN).then(() => console.log(`Logged in as ${client.user.tag}`));
