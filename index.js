@@ -162,7 +162,7 @@ client.on("messageCreate", async (message) => {
     const embed = new EmbedBuilder()
       .setColor(0x000000)
       .setTitle("— <a:emoji_20:1464222092353605735> HELP MENU —")
-      .setDescription(`**Available Commands**\n\n**!stats [@user]**\n**!daily [@user]**\n**!fuck @user**\n**!purge** (owner)\n**!unhook**\n**!check** / **!domains** → Website status\n**!create_ticket_panel** (owner)`)
+      .setDescription(`**Available Commands**\n\n**!stats [@user]**\n**!daily [@user]**\n**!fuck @user**\n**!purge** (owner)\n**!unhook**\n**!check** / \n**!create_ticket_panel** (owner)`)
       .setImage(getRandomPurge())
       .setFooter({ text: `Requested by ${message.author.username}` });
     await message.channel.send({ embeds: [embed] });
@@ -201,11 +201,11 @@ client.on("messageCreate", async (message) => {
             `<:wife2:1528425805099696148> **Response:** ${latency}ms\n` +
             `<:Wifee:1528425538358870117> **Status Code:** ${res.status}\n\n` +
             `**Browser Compatibility**\n` +
-            `<:chroma:1528429000710557866> Chrome <:verified2:1528430350546501642>\n` +
-            `<:firefx:1528425451943362670> Firefox <:verified2:1528430350546501642>\n` +
-            `<:operaa:1528425324704956608> Opera <:verified2:1528430350546501642>\n` +
-            `<:operagxb:1528424369120870491> Opera GX <:verified2:1528430350546501642>\n` +
-            `<:internetexp:1528425385291944117> Internet Explorer <:verified2:1528430350546501642>`
+            `<:chroma:1528429000710557866>       <:verified2:1528430350546501642>\n` +
+            `<:firefx:1528425451943362670>       <:verified2:1528430350546501642>\n` +
+            `<:operaa:1528425324704956608>       <:verified2:1528430350546501642>\n` +
+            `<:operagxb:1528424369120870491>     <:verified2:1528430350546501642>\n` +
+            `<:internetexp:1528425385291944117>  <:verified2:1528430350546501642>`
           )
           .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif")
           .setFooter({ text: `Requested by ${message.author.username}` });
@@ -215,8 +215,8 @@ client.on("messageCreate", async (message) => {
     } catch (err) {
       const offlineEmbed = new EmbedBuilder()
         .setColor(0xFF0000)
-        .setAuthor({ name: "Website Status", iconURL: "https://cdn3.emoji.gg/emojis/9596-offline.gif" })
-        .setTitle("Domain is offline")
+        .setAuthor({ name: "<:tech:1528425582218448907>Website Status", iconURL: "https://cdn3.emoji.gg/emojis/9596-offline.gif" })
+        .setTitle("<:nowifi:1528433695957192744>website  is offline")
         .setThumbnail("https://cdn3.emoji.gg/emojis/9596-offline.gif")
         .setDescription(`**Error:** Timeout\n**Unable to fetch from API**`)
         .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif")
