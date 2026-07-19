@@ -198,14 +198,14 @@ client.on("messageCreate", async (message) => {
           .setTitle("Website is online")
           .setThumbnail("https://cdn3.emoji.gg/emojis/49198-online1.gif")
           .setDescription(
-            `<a:wifianimated:1528419842472939732> **Response:** ${latency}ms\n` +
-            `<:wifi:1528414786906357832> **Status Code:** ${res.status}\n\n` +
+            `<:wife2:1528425805099696148> **Response:** ${latency}ms\n` +
+            `<:Wifee:1528425538358870117> **Status Code:** ${res.status}\n\n` +
             `**Browser Compatibility**\n` +
-            `<:chrome:1528414430788845728> Chrome <a:verified:1528413759817646110>\n` +
-            `<:firefox:1528414479510011934> Firefox <a:verified:1528413759817646110>\n` +
-            `<:opera:1528414471511343154> Opera <a:verified:1528413759817646110>\n` +
-            `<:operagx:1528414457749831751> Opera GX <a:verified:1528413759817646110>\n` +
-            `<:internetexplorer:1528413784459186237> Internet Explorer <a:verified:1528413759817646110>`
+            `<:chroma:1528429000710557866> Chrome <:verified2:1528430350546501642>\n` +
+            `<:firefx:1528425451943362670> Firefox <:verified2:1528430350546501642>\n` +
+            `<:operaa:1528425324704956608> Opera <:verified2:1528430350546501642>\n` +
+            `<:operagxb:1528424369120870491> Opera GX <:verified2:1528430350546501642>\n` +
+            `<:internetexp:1528425385291944117> Internet Explorer <:verified2:1528430350546501642>`
           )
           .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif")
           .setFooter({ text: `Requested by ${message.author.username}` });
