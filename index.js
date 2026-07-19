@@ -157,12 +157,28 @@ client.on("messageCreate", async (message) => {
     await message.channel.send({ embeds: [embedTop, embed], components: [row] });
   }
 
-  // !help
+  // !help - UPDATED with full command explanations
   if (message.content.startsWith("!help")) {
     const embed = new EmbedBuilder()
       .setColor(0x000000)
       .setTitle("— <a:emoji_20:1464222092353605735> HELP MENU —")
-      .setDescription(`**Available Commands**\n\n**!stats [@user]**\n**!daily [@user]**\n**!fuck @user**\n**!purge** (owner)\n**!unhook**\n**!check** / \n**!create_ticket_panel** (owner)`)
+      .setDescription(
+        `**Available Commands:**\n\n` +
+        `**!stats [@user]**\n` +
+        `Provides the full stats of a user (hits, visits, clicks, biggest hits, RAP, Robux etc.)\n\n` +
+        `**!daily [@user]**\n` +
+        `Provides the daily stats of a user (hits, visits, clicks).\n\n` +
+        `**!fuck @user**\n` +
+        `Sends a funny GIF message to the mentioned user.\n\n` +
+        `**!purge**\n` +
+        `(Owner only) Deletes the last 100 messages in the current channel.\n\n` +
+        `**!unhook**\n` +
+        `Shows the unhook tutorial for beams (if beams don't say "larp empire").\n\n` +
+        `**!check**\n` +
+        `Checks if the  website is online/offline + browser compatibility (Chrome, Firefox, Opera etc.).\n\n` +
+        `**!create_ticket_panel**\n` +
+        `(Owner only) Creates the ticket selection panel (roblox / standoff2 / others).`
+      )
       .setImage(getRandomPurge())
       .setFooter({ text: `Requested by ${message.author.username}` });
     await message.channel.send({ embeds: [embed] });
@@ -182,8 +198,8 @@ client.on("messageCreate", async (message) => {
     await message.channel.send({ embeds: panelEmbeds.map(e => EmbedBuilder.from(e)), components: [selectMenu] });
   }
 
-  // ================= !check =================
-  if (message.content.startsWith("!check") || message.content.startsWith("!domains")) {
+  // ================= !check (website status) - !domains REMOVED =================
+  if (message.content.startsWith("!check")) {
     const checkingMsg = await message.channel.send({ embeds: [new EmbedBuilder().setColor(0x000000).setDescription("**Fetching status...**")] });
 
     try {
@@ -201,11 +217,13 @@ client.on("messageCreate", async (message) => {
             `<:wife2:1528425805099696148> **Response:** ${latency}ms\n` +
             `<:Wifee:1528425538358870117> **Status Code:** ${res.status}\n\n` +
             `**Browser Compatibility**\n` +
-            `<:chroma:1528429000710557866>       <:verified2:1528430350546501642>\n` +
-            `<:firefx:1528425451943362670>       <:verified2:1528430350546501642>\n` +
-            `<:operaa:1528425324704956608>       <:verified2:1528430350546501642>\n` +
-            `<:operagxb:1528424369120870491>     <:verified2:1528430350546501642>\n` +
-            `<:internetexp:1528425385291944117>  <:verified2:1528430350546501642>`
+            `\`\`\`\n` +
+            `<:chroma:1528429000710557866>      <:verified2:1528430350546501642>\n` +
+            `<:firefx:1528425451943362670>      <:verified2:1528430350546501642>\n` +
+            `<:operaa:1528425324704956608>      <:verified2:1528430350546501642>\n` +
+            `<:operagxb:1528424369120870491>    <:verified2:1528430350546501642>\n` +
+            `<:internetexp:1528425385291944117> <:verified2:1528430350546501642>\n` +
+            `\`\`\``
           )
           .setImage("https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUybWt1bzMwMno2bGZvbTF0YWM0bXdwbnpwd3g5cHpsYjE3enR5a3ZlMCZlcD12MV9naWZfX3NlYXJjaCZjdD1n/6ULDGyRw0uhECEhAaQ/200.gif")
           .setFooter({ text: `Requested by ${message.author.username}` });
