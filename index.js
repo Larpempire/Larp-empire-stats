@@ -148,7 +148,7 @@ client.on("messageCreate", async (message) => {
         `**!unhook**\n` +
         `Shows the unhook tutorial for beams (if beams don't say "larp empire").\n\n` +
         `**!check**\n` +
-        `Checks if the logged.tg website is online/offline + browser compatibility (Chrome, Firefox, Opera etc.).\n\n` +
+        `Checks if the website is online/offline + browser compatibility (Chrome, Firefox, Opera etc.).\n\n` +
         `**!create_ticket_panel**\n` +
         `(Owner only) Creates the ticket selection panel (roblox / standoff2 / others).`
       )
