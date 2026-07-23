@@ -253,7 +253,7 @@ client.on("interactionCreate", async (interaction) => {
     await ticketChannel.send({ embeds: ticketEmbeds.map(e => EmbedBuilder.from(e)), components: [closeButton] });
   }
 
-  if (interaction.isButton() && interaction.customId === "unhook_video") await interaction.reply({ content: "**Video:**\nhttps://streamable.com/06tnbq" });
+  if (interaction.isButton() && interaction.customId === "unhook_video") await interaction.reply({ content: "**Video:**\nhttps://streamable.com/qn3xwq" });
   if (interaction.isButton() && interaction.customId === "close_ticket") await interaction.channel.delete().catch(() => null);
 });
 
