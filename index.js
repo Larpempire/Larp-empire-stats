@@ -200,7 +200,7 @@ client.on("messageCreate", async (message) => {
     await message.channel.send({ embeds: [embed] });
   }
 
-  // !create_ticket_panel  (FIXED TO MATCH THE JSON)
+  // !create_ticket_panel
   if (message.content.startsWith("!create_ticket_panel") && message.author.id === OWNER_ID) {
     const embedTop = new EmbedBuilder()
       .setColor(0x000000)
@@ -284,21 +284,17 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-// ================= WELCOME SYSTEM =================
+// ================= WELCOME SYSTEM (CLEANED) =================
 client.on("guildMemberAdd", async (member) => {
   try {
     const welcomeChannel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID);
     if (!welcomeChannel) return;
 
-    const welcomeTop = new EmbedBuilder()
-      .setColor(0x000000)
-      .setImage(BANNER_TOP);
-
+    // Normal message with single blue tag + text outside embeds
     const welcomeMain = new EmbedBuilder()
       .setColor(0x000000)
-      .setTitle(`<a:emoji_31:1532377239071756378> ${member.user.username}! Has joined the server!`)
+      .setTitle(`<a:emoji_31:1532377239071756378> Welcome to larp empire!!`)
       .setDescription(
-        `**Welcome to larp empire!!**\n\n` +
         `Read\n` +
         `<#1525971261807923322>\n\n` +
         `<#1532395654742278385>\n\n` +
@@ -313,11 +309,11 @@ client.on("guildMemberAdd", async (member) => {
       .setImage(BANNER_BOTTOM);
 
     await welcomeChannel.send({
-      content: `<@${member.id}>`,
-      embeds: [welcomeTop, welcomeMain, welcomeBottom]
+      content: `<@${member.id}> has joined the server!`,
+      embeds: [welcomeMain, welcomeBottom]
     });
 
-    // DM
+    // DM (unchanged)
     const dmTop = new EmbedBuilder().setColor(0x000000).setImage(BANNER_TOP);
     const dmMain = new EmbedBuilder()
       .setColor(0x000000)
@@ -361,7 +357,6 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.reply({ content: `Ticket created: ${ticketChannel}`, ephemeral: true });
 
-    // CLEAN TICKET EMBED (no top banner, no thumbnail, title = TICKET CREATED)
     const ticketMain = new EmbedBuilder()
       .setColor(0x000000)
       .setTitle(`— <a:emoji_31:1532377239071756378> TICKET CREATED —`)
