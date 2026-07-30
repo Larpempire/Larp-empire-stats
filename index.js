@@ -11,12 +11,18 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // ================= DISCORD CLIENT =================
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers
+  ]
 });
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
 const OWNER_ID = "1464634211406188721";
 const TICKET_CATEGORY = "1525971261807923321";
+const WELCOME_CHANNEL_ID = "1525971261807923324";
 
 const SUPPORT_ROLES = ["1525971260943892518", "1525971260943892517"];
 
@@ -53,9 +59,8 @@ client.on("messageCreate", async (message) => {
   if (!member) return;
   const botAvatar = client.user.displayAvatarURL({ dynamic: true });
 
-  // OWNER BYPASS - owner poate trimite linkuri, spama, injuries etc.
+  // OWNER BYPASS
   if (message.author.id !== OWNER_ID) {
-    // SPAM + LINK
     const userData = userMessageMap.get(message.author.id) || { count: 0, timer: null, lastMessage: Date.now() };
     userData.count += 1;
     if (Date.now() - userData.lastMessage < 1000) userData.count += 3;
@@ -91,7 +96,7 @@ client.on("messageCreate", async (message) => {
   const targetUser = message.mentions.users.first() || message.author;
   const targetId = targetUser.id;
 
-  // !stats  (UPDATED EMBEDS)
+  // !stats  (UPDATED – footer only on bottom embed + TOTAL HIT STATS)
   if (message.content.startsWith("!stats")) {
     try {
       const res = await fetchWithTimeout(`https://api.injuries.to/v1/public/user?userId=${targetId}`);
@@ -101,6 +106,12 @@ client.on("messageCreate", async (message) => {
       const normal = data.Normal;
       const profile = data.Profile || {};
       const userName = profile.userName || targetUser.username;
+
+      // Try to pull total hit data if API provides it, otherwise fallback
+      const totalHits = normal.TotalHits || normal.AllTime || normal.Totals || {};
+      const totalSummary = totalHits.Summary || normal.Highest?.Summary || 0;
+      const totalRap = totalHits.Rap || normal.Highest?.Rap || 0;
+      const totalRobux = totalHits.Balance || normal.Highest?.Balance || 0;
 
       const embedTop = new EmbedBuilder()
         .setColor(0x000000)
@@ -115,14 +126,16 @@ client.on("messageCreate", async (message) => {
           `<a:emoji_30:1532377209434542320>**TOTAL STATS**\n` +
           `\`\`\`Hits:     ${formatNumber(normal.Totals?.Accounts)}\nVisits:   ${formatNumber(normal.Totals?.Visits)}\nClicks:   ${formatNumber(normal.Totals?.Clicks)}\`\`\`\n\n` +
           `<a:emoji_33:1532377228237603057>**BIGGEST HITS**\n` +
-          `\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\``
+          `\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\`\n\n` +
+          `<:emoji_18:1532377873430614268>**TOTAL HIT STATS**\n` +
+          `\`\`\`Summary:  ${formatNumber(totalSummary)}\nRAP:      ${formatNumber(totalRap)}\nRobux:    ${formatNumber(totalRobux)}\`\`\``
         )
-        .setImage(STATS_GIF)
-        .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
+        .setImage(STATS_GIF);
 
       const embedBottom = new EmbedBuilder()
         .setColor(0x000000)
-        .setImage(BANNER_BOTTOM);
+        .setImage(BANNER_BOTTOM)
+        .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
 
       await message.channel.send({
         embeds: [embedTop, embed, embedBottom],
@@ -188,7 +201,7 @@ client.on("messageCreate", async (message) => {
     await message.channel.send({ embeds: [embed] });
   }
 
-  // !create_ticket_panel  (UPDATED EMBEDS)
+  // !create_ticket_panel
   if (message.content.startsWith("!create_ticket_panel") && message.author.id === OWNER_ID) {
     const embedTop = new EmbedBuilder()
       .setColor(0x000000)
@@ -263,6 +276,65 @@ client.on("messageCreate", async (message) => {
   }
 });
 
+// ================= WELCOME SYSTEM =================
+client.on("guildMemberAdd", async (member) => {
+  try {
+    const welcomeChannel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID);
+    if (!welcomeChannel) return;
+
+    // Channel welcome message
+    const welcomeTop = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_TOP);
+
+    const welcomeMain = new EmbedBuilder()
+      .setColor(0x000000)
+      .setTitle(`<a:emoji_31:1532377239071756378> ${member.user.username}! Has joined the server!`)
+      .setDescription(
+        `**Welcome to larp empire!!**\n\n` +
+        `Read\n` +
+        `<#1525971261807923322>\n\n` +
+        `<#1532395654742278385>\n\n` +
+        `Remember to verify!!\n` +
+        `<#1525971261807923323>`
+      )
+      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+      .setImage(STATS_GIF);
+
+    const welcomeBottom = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_BOTTOM);
+
+    await welcomeChannel.send({
+      content: `<@${member.id}>`,
+      embeds: [welcomeTop, welcomeMain, welcomeBottom]
+    });
+
+    // DM to the new member
+    const dmTop = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_TOP);
+
+    const dmMain = new EmbedBuilder()
+      .setColor(0x000000)
+      .setDescription(
+        `Hi! ${member.user.username}\n\n` +
+        `If you come from another generator u might be dualhooked!\n\n` +
+        `If your beams don’t say \`larp empire\`\n\n` +
+        `Go to the channel cmds and use the \`!unhook\` command!!`
+      )
+      .setImage(STATS_GIF);
+
+    const dmBottom = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_BOTTOM);
+
+    await member.send({ embeds: [dmTop, dmMain, dmBottom] }).catch(() => null);
+  } catch (err) {
+    console.error("Welcome error:", err);
+  }
+});
+
 // ================= INTERACTIONS =================
 client.on("interactionCreate", async (interaction) => {
   if (interaction.isStringSelectMenu() && interaction.customId === "ticket_select") {
@@ -286,7 +358,6 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.reply({ content: `Ticket created: ${ticketChannel}`, ephemeral: true });
 
-    // UPDATED TICKET CHANNEL EMBEDS
     const ticketTop = new EmbedBuilder()
       .setColor(0x000000)
       .setImage(BANNER_TOP);
@@ -323,7 +394,7 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.isButton() && interaction.customId === "close_ticket") await interaction.channel.delete().catch(() => null);
 });
 
-// ================= AUTO-PURGE (protects !help message) =================
+// ================= AUTO-PURGE =================
 setInterval(async () => {
   try {
     for (const guild of client.guilds.cache.values()) {
