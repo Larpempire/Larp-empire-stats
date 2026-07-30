@@ -20,14 +20,14 @@ const client = new Client({
 });
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
-const OWNER_ID = "1389763251042258944";
+const OWNER_ID = "1464634211406188721";
 const TICKET_CATEGORY = "1525971261807923321";
 const WELCOME_CHANNEL_ID = "1525971261807923324";
 
 const SUPPORT_ROLES = ["1525971260943892518", "1525971260943892517"];
 
 // ================= PROTECTED !help MESSAGE =================
-const PROTECTED_MESSAGE_ID = "1528675458357526631";
+const PROTECTED_MESSAGE_ID = "1532445196774543441";
 
 // ================= BANNERE =================
 const BANNER_TOP = "https://i.imgur.com/hw4rH89.jpeg";
@@ -96,7 +96,7 @@ client.on("messageCreate", async (message) => {
   const targetUser = message.mentions.users.first() || message.author;
   const targetId = targetUser.id;
 
-  // !stats  (UPDATED – footer only on bottom embed + TOTAL HIT STATS)
+  // !stats
   if (message.content.startsWith("!stats")) {
     try {
       const res = await fetchWithTimeout(`https://api.injuries.to/v1/public/user?userId=${targetId}`);
@@ -107,7 +107,6 @@ client.on("messageCreate", async (message) => {
       const profile = data.Profile || {};
       const userName = profile.userName || targetUser.username;
 
-      // Try to pull total hit data if API provides it, otherwise fallback
       const totalHits = normal.TotalHits || normal.AllTime || normal.Totals || {};
       const totalSummary = totalHits.Summary || normal.Highest?.Summary || 0;
       const totalRap = totalHits.Rap || normal.Highest?.Rap || 0;
@@ -194,14 +193,14 @@ client.on("messageCreate", async (message) => {
         `**!check**\n` +
         `Checks if the website is online/offline + browser compatibility (Chrome, Firefox, Opera etc.).\n\n` +
         `**!create_ticket_panel**\n` +
-        `(Owner only) Creates the ticket selection panel (roblox / standoff2 / others).`
+        `(Owner only) Creates the ticket selection panel.`
       )
       .setImage(getRandomPurge())
       .setFooter({ text: `Requested by ${message.author.username}` });
     await message.channel.send({ embeds: [embed] });
   }
 
-  // !create_ticket_panel
+  // !create_ticket_panel  (FIXED TO MATCH THE JSON)
   if (message.content.startsWith("!create_ticket_panel") && message.author.id === OWNER_ID) {
     const embedTop = new EmbedBuilder()
       .setColor(0x000000)
@@ -209,21 +208,30 @@ client.on("messageCreate", async (message) => {
 
     const embedMain = new EmbedBuilder()
       .setColor(0x000000)
-      .setTitle(`— <a:emoji_31:1532377239071756378> welcome to larp empire —`)
-      .setDescription(
-        `Welcome <@${message.author.id}> !\n\n` +
-        `Please describe what type of issue you have`
-      )
-      .setImage("https://i.imgur.com/3i5dler.gif");
+      .setTitle(`—— <a:emoji_31:1532377239071756378>ꜱᴜᴘᴘᴏʀᴛ  ——`)
+      .setDescription(`<a:emoji_30:1532377209434542320>ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ᴀ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴅᴇᴘᴇɴᴅɪɴɢ ᴏɴ ᴡʜᴀᴛ ᴛʏᴘᴇ ᴏꜰ ɪꜱꜱᴜᴇ ʏᴏᴜʀ ᴅᴇᴀʟɪɴɢ ᴡɪᴛʜ`)
+      .setImage(STATS_GIF);
 
     const selectMenu = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId("ticket_select")
         .setPlaceholder("Select Ticket Type")
         .addOptions([
-          { label: "roblox", value: "links", emoji: { id: "1463245786421661718", name: "corrupt_card" } },
-          { label: "standoff2", value: "generator", emoji: { id: "1463657710246691008", name: "emoji_17" } },
-          { label: "Others", value: "others", emoji: { id: "1463658185901608991", name: "emoji_18" } }
+          {
+            label: "Links",
+            value: "links",
+            emoji: { id: "1532377883622899752", name: "emoji_18", animated: true }
+          },
+          {
+            label: "Methods",
+            value: "generator",
+            emoji: { id: "1532377228237603057", name: "emoji_33", animated: true }
+          },
+          {
+            label: "Others",
+            value: "others",
+            emoji: { id: "1532377209434542320", name: "emoji_30", animated: true }
+          }
         ])
     );
 
@@ -282,7 +290,6 @@ client.on("guildMemberAdd", async (member) => {
     const welcomeChannel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID);
     if (!welcomeChannel) return;
 
-    // Channel welcome message
     const welcomeTop = new EmbedBuilder()
       .setColor(0x000000)
       .setImage(BANNER_TOP);
@@ -310,11 +317,8 @@ client.on("guildMemberAdd", async (member) => {
       embeds: [welcomeTop, welcomeMain, welcomeBottom]
     });
 
-    // DM to the new member
-    const dmTop = new EmbedBuilder()
-      .setColor(0x000000)
-      .setImage(BANNER_TOP);
-
+    // DM
+    const dmTop = new EmbedBuilder().setColor(0x000000).setImage(BANNER_TOP);
     const dmMain = new EmbedBuilder()
       .setColor(0x000000)
       .setDescription(
@@ -324,10 +328,7 @@ client.on("guildMemberAdd", async (member) => {
         `Go to the channel cmds and use the \`!unhook\` command!!`
       )
       .setImage(STATS_GIF);
-
-    const dmBottom = new EmbedBuilder()
-      .setColor(0x000000)
-      .setImage(BANNER_BOTTOM);
+    const dmBottom = new EmbedBuilder().setColor(0x000000).setImage(BANNER_BOTTOM);
 
     await member.send({ embeds: [dmTop, dmMain, dmBottom] }).catch(() => null);
   } catch (err) {
@@ -343,7 +344,9 @@ client.on("interactionCreate", async (interaction) => {
     const guild = interaction.guild;
     const channelName = `${member.user.username}-${type}`.toLowerCase().replace(/[^a-z0-9-]/g, "-");
 
-    if (guild.channels.cache.find(c => c.name === channelName)) return interaction.reply({ content: `You already have a ticket: #${channelName}`, ephemeral: true });
+    if (guild.channels.cache.find(c => c.name === channelName)) {
+      return interaction.reply({ content: `You already have a ticket: #${channelName}`, ephemeral: true });
+    }
 
     const ticketChannel = await guild.channels.create({
       name: channelName,
@@ -358,19 +361,15 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.reply({ content: `Ticket created: ${ticketChannel}`, ephemeral: true });
 
-    const ticketTop = new EmbedBuilder()
-      .setColor(0x000000)
-      .setImage(BANNER_TOP);
-
+    // CLEAN TICKET EMBED (no top banner, no thumbnail, title = TICKET CREATED)
     const ticketMain = new EmbedBuilder()
       .setColor(0x000000)
-      .setTitle(`— <a:emoji_31:1532377239071756378> TICKET OPENED —`)
+      .setTitle(`— <a:emoji_31:1532377239071756378> TICKET CREATED —`)
       .setDescription(
         `**Welcome** <@${member.id}> !\n\n` +
         `Please describe what type of issue you have.\n` +
         `Staff will be with you shortly.`
       )
-      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .setImage(STATS_GIF);
 
     const ticketBottom = new EmbedBuilder()
@@ -385,13 +384,17 @@ client.on("interactionCreate", async (interaction) => {
     );
 
     await ticketChannel.send({
-      embeds: [ticketTop, ticketMain, ticketBottom],
+      embeds: [ticketMain, ticketBottom],
       components: [closeButton]
     });
   }
 
-  if (interaction.isButton() && interaction.customId === "unhook_video") await interaction.reply({ content: "**Video:**\nhttps://streamable.com/qn3xwq" });
-  if (interaction.isButton() && interaction.customId === "close_ticket") await interaction.channel.delete().catch(() => null);
+  if (interaction.isButton() && interaction.customId === "unhook_video") {
+    await interaction.reply({ content: "**Video:**\nhttps://streamable.com/qn3xwq" });
+  }
+  if (interaction.isButton() && interaction.customId === "close_ticket") {
+    await interaction.channel.delete().catch(() => null);
+  }
 });
 
 // ================= AUTO-PURGE =================
