@@ -224,12 +224,12 @@ client.on("messageCreate", async (message) => {
           },
           {
             label: "Methods",
-            value: "generator",
+            value: "Methods",
             emoji: { id: "1532377228237603057", name: "emoji_33", animated: true }
           },
           {
             label: "Others",
-            value: "others",
+            value: "Others",
             emoji: { id: "1532377209434542320", name: "emoji_30", animated: true }
           }
         ])
