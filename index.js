@@ -20,7 +20,7 @@ const client = new Client({
 });
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
-const OWNER_ID = "1459248608791760957";
+const OWNER_ID = "1389763251042258944";
 const TICKET_CATEGORY = "1525971261807923321";
 const WELCOME_CHANNEL_ID = "1525971261807923324";
 
@@ -420,7 +420,11 @@ client.on("interactionCreate", async (interaction) => {
         .setStyle(ButtonStyle.Secondary)
     );
 
+    // Crează mențiunile pentru rolurile de support
+    const supportMentions = SUPPORT_ROLES.map(roleId => `<@&${roleId}>`).join(' ');
+
     await ticketChannel.send({
+      content: `${supportMentions} - New ticket created by <@${member.id}>!`,
       embeds: [ticketMain, ticketBottom],
       components: [closeButton]
     });
