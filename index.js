@@ -420,13 +420,16 @@ client.on("interactionCreate", async (interaction) => {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    // Crează mențiunile pentru rolurile de support
-    const supportMentions = SUPPORT_ROLES.map(roleId => `<@&${roleId}>`).join(' ');
-
+    // Trimite mai întâi embed-urile
     await ticketChannel.send({
-      content: `${supportMentions} - New ticket created by <@${member.id}>!`,
       embeds: [ticketMain, ticketBottom],
       components: [closeButton]
+    });
+
+    // Trimite un mesaj separat cu ping către rolurile de support
+    const supportMentions = SUPPORT_ROLES.map(roleId => `<@&${roleId}>`).join(' ');
+    await ticketChannel.send({
+      content: `${supportMentions}`
     });
   }
 
