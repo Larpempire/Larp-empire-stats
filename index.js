@@ -509,23 +509,65 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-// ================= AUTO-PURGE =================
-setInterval(async () => {
+// ================= AUTO-PURGE (la 1 zi) =================
+async function autoPurge() {
   try {
+    console.log("🔄 Auto-purge starting...");
     for (const guild of client.guilds.cache.values()) {
       for (const channelId of ["1525971262285807761"]) {
         const channel = guild.channels.cache.get(channelId);
         if (channel?.isTextBased()) {
-          const fetched = await channel.messages.fetch({ limit: 50 }).catch(() => null);
-          if (fetched?.size) {
-            const toDelete = fetched.filter(m => m.id !== PROTECTED_MESSAGE_ID);
-            if (toDelete.size) await channel.bulkDelete(toDelete, true).catch(() => null);
+          // Fetch mai multe mesaje (maximum 100 per request)
+          let fetched;
+          let totalDeleted = 0;
+          let hasMore = true;
+          
+          while (hasMore) {
+            try {
+              fetched = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+              if (!fetched || fetched.size === 0) {
+                hasMore = false;
+                break;
+              }
+              
+              const toDelete = fetched.filter(m => m.id !== PROTECTED_MESSAGE_ID);
+              if (toDelete.size > 0) {
+                await channel.bulkDelete(toDelete, true).catch(() => null);
+                totalDeleted += toDelete.size;
+                console.log(`🗑️ Deleted ${toDelete.size} messages in ${channel.name} (Total: ${totalDeleted})`);
+              }
+              
+              // Dacă avem mai puțin de 100 mesaje, am terminat
+              if (fetched.size < 100) {
+                hasMore = false;
+              }
+              
+              // Mic delay pentru a nu lovi rate limit
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            } catch (err) {
+              console.error("Error in auto-purge batch:", err);
+              hasMore = false;
+            }
+          }
+          
+          if (totalDeleted > 0) {
+            console.log(`✅ Auto-purge completed: Deleted ${totalDeleted} messages total in ${channel.name}`);
+          } else {
+            console.log(`ℹ️ No messages to delete in ${channel.name}`);
           }
         }
       }
     }
-  } catch (err) { console.error(err); }
-}, 30 * 60 * 1000);
+  } catch (err) { 
+    console.error("❌ Auto-purge error:", err); 
+  }
+}
+
+// Rulează auto-purge la fiecare 24 de ore (86400000 ms)
+setInterval(autoPurge, 24 * 60 * 60 * 1000);
+
+// Rulează o dată la pornirea botului
+setTimeout(autoPurge, 5000);
 
 // LOGIN
 client.login(TOKEN).then(() => console.log(`Logged in as ${client.user.tag}`));
