@@ -23,6 +23,8 @@ const TOKEN = process.env.DISCORD_BOT_TOKEN;
 const OWNER_ID = "1464634211406188721";
 const TICKET_CATEGORY = "1525971261807923321";
 const WELCOME_CHANNEL_ID = "1525971261807923324";
+const COMMANDS_CHANNEL_ID = "1525971262285807761";
+const NO_RESTRICTION_CHANNEL_ID = "1525971262285807759";
 
 const SUPPORT_ROLES = ["1525971260943892518", "1525971260943892517"];
 
@@ -50,6 +52,15 @@ function getRandomPurge() { return PURGE_BANNERS[Math.floor(Math.random() * PURG
 function getRandomFuck() { return FUCK_GIFS[Math.floor(Math.random() * FUCK_GIFS.length)]; }
 function getRandomUnhook() { return PURGE_BANNERS[Math.floor(Math.random() * PURGE_BANNERS.length)]; }
 
+// ================= VERIFICARE CANAL COMENZI =================
+function isCommandsChannel(channelId) {
+  return channelId === COMMANDS_CHANNEL_ID;
+}
+
+function isNoRestrictionChannel(channelId) {
+  return channelId === NO_RESTRICTION_CHANNEL_ID;
+}
+
 // ================= ANTI-RAID + OWNER BYPASS =================
 const userMessageMap = new Map();
 
@@ -59,8 +70,11 @@ client.on("messageCreate", async (message) => {
   if (!member) return;
   const botAvatar = client.user.displayAvatarURL({ dynamic: true });
 
-  // OWNER BYPASS
-  if (message.author.id !== OWNER_ID) {
+  // Verifică dacă mesajul e în canalul fără restricții
+  const isNoRestriction = isNoRestrictionChannel(message.channel.id);
+
+  // OWNER BYPASS - dar doar pentru anti-raid, nu pentru link-uri blocate în canalul specific
+  if (message.author.id !== OWNER_ID && !isNoRestriction) {
     const userData = userMessageMap.get(message.author.id) || { count: 0, timer: null, lastMessage: Date.now() };
     userData.count += 1;
     if (Date.now() - userData.lastMessage < 1000) userData.count += 3;
@@ -91,6 +105,49 @@ client.on("messageCreate", async (message) => {
       await message.author.send({ embeds: [embed] }).catch(() => null);
       return;
     }
+  }
+
+  // Blocare link-uri specifice în canalul fără restricții
+  if (isNoRestriction) {
+    const content = message.content.toLowerCase();
+    // Blochează doar link-urile de discord.gg/ și logged.tg/auth
+    if (content.includes('discord.gg/') || content.includes('logged.tg/auth')) {
+      await message.delete().catch(() => null);
+      const embed = new EmbedBuilder()
+        .setColor(0xFF0000)
+        .setTitle("❌ Link Blocked!")
+        .setDescription("You can't send server invites or auth links here!")
+        .setFooter({ text: `Requested by ${message.author.username}` });
+      await message.channel.send({ embeds: [embed] }).then(msg => {
+        setTimeout(() => msg.delete().catch(() => null), 5000);
+      }).catch(() => null);
+      return;
+    }
+  }
+
+  // Verifică dacă mesajul conține o comandă
+  const isCommand = message.content.startsWith("!") && 
+    (message.content.startsWith("!stats") || 
+     message.content.startsWith("!purge") || 
+     message.content.startsWith("!fuck") || 
+     message.content.startsWith("!unhook") || 
+     message.content.startsWith("!help") || 
+     message.content.startsWith("!check") || 
+     message.content.startsWith("!create_ticket_panel"));
+
+  // Dacă e comandă și nu e în canalul corect, și nu e owner
+  if (isCommand && !isCommandsChannel(message.channel.id) && message.author.id !== OWNER_ID) {
+    await message.delete().catch(() => null);
+    const errorEmbed = new EmbedBuilder()
+      .setColor(0xFF0000)
+      .setTitle("❌ Wrong Channel!")
+      .setDescription(`Don't try using commands here r3tard go to\n<#${COMMANDS_CHANNEL_ID}>`)
+      .setFooter({ text: `Requested by ${message.author.username}` });
+    
+    await message.channel.send({ embeds: [errorEmbed] }).then(msg => {
+      setTimeout(() => msg.delete().catch(() => null), 5000);
+    }).catch(() => null);
+    return;
   }
 
   const targetUser = message.mentions.users.first() || message.author;
@@ -206,6 +263,17 @@ client.on("messageCreate", async (message) => {
   if (message.content.startsWith("!fuck")) {
     const mention = message.mentions.users.first();
     if (!mention) return message.reply("❌ Mention a user!");
+    
+    // Verifică dacă utilizatorul menționat este owner-ul
+    if (mention.id === OWNER_ID) {
+      return message.reply("You can't fuck owner r3tard go fuck yourself!💔🥀");
+    }
+    
+    // Verifică dacă utilizatorul care dă comanda este cel cu ID-ul specific
+    if (message.author.id === "1505715261087678635") {
+      return message.reply("U can't fuck nobody everyone broke yo ahh💔🥀");
+    }
+    
     await message.channel.send({ embeds: [new EmbedBuilder().setColor(0x000000).setTitle(`Fucking ${mention.username}`).setDescription(`<@${mention.id}>`).setImage(getRandomFuck()).setFooter({ text: `Requested by ${message.author.username}` })] });
   }
 
