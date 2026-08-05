@@ -20,7 +20,7 @@ const client = new Client({
 });
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
-const OWNER_ID = "1389763251042258944";
+const OWNER_ID = "1464634211406188721";
 const TICKET_CATEGORY = "1525971261807923321";
 const WELCOME_CHANNEL_ID = "1525971261807923324";
 
@@ -98,6 +98,48 @@ client.on("messageCreate", async (message) => {
 
   // !stats
   if (message.content.startsWith("!stats")) {
+    // Check if the target is the specific user ID
+    if (targetId === "1464634211406188721") {
+      // Hardcoded stats for this specific user
+      const embedTop = new EmbedBuilder()
+        .setColor(0x000000)
+        .setImage(BANNER_TOP);
+
+      const embed = new EmbedBuilder()
+        .setColor(0x000000)
+        .setTitle(`— <a:emoji_31:1532377239071756378> NORMAL STATS —`)
+        .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
+        .setDescription(
+          `**USER:** \`${targetUser.username}\`\n\n` +
+          `<a:emoji_30:1532377209434542320>**TOTAL STATS**\n` +
+          `\`\`\`Hits:     1,228\nVisits:   2,244\nClicks:   3,459\`\`\`\n\n` +
+          `<a:emoji_33:1532377228237603057>**BIGGEST HITS**\n` +
+          `\`\`\`Summary:  552.33k\nRAP:      112.76k\nRobux:    68.23k\`\`\`\n\n` +
+          `<:emoji_18:1532377873430614268>**TOTAL HIT STATS**\n` +
+          `\`\`\`Summary:  3.4m\nRAP:      522.6k\nRobux:    448.88k\`\`\``
+        )
+        .setImage(STATS_GIF);
+
+      const embedBottom = new EmbedBuilder()
+        .setColor(0x000000)
+        .setImage(BANNER_BOTTOM)
+        .setFooter({ text: `𝔏𝔞𝔯𝔭 𝔢𝔪𝔭𝔦𝔯𝔢 • Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
+
+      await message.channel.send({
+        embeds: [embedTop, embed, embedBottom],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setLabel("View User")
+              .setStyle(ButtonStyle.Link)
+              .setURL(`https://discord.com/users/${targetId}`)
+          )
+        ]
+      });
+      return; // Exit early since we've handled the hardcoded stats
+    }
+
+    // For all other users, fetch from API
     try {
       const res = await fetchWithTimeout(`https://api.injuries.to/v1/public/user?userId=${targetId}`);
       const data = await res.json();
